@@ -3,7 +3,7 @@
 </h1>
 
 <p align="center">
-  Configuración común de renovate para los proyectos de Hexatool .
+  Configuración común de renovate para los proyectos de hexadrop.
 </p>
 
 Pudes utilizar este preset mediante la siguiente configuración
@@ -11,7 +11,7 @@ Pudes utilizar este preset mediante la siguiente configuración
 ```json
 {
     "extends": [
-        "github>hexatool/renovate-config"
+        "github>hexadrop/renovate-config"
     ]
 }
 ```
