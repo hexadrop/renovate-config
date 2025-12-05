@@ -1,82 +1,18 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:base",
-    ":disableDependencyDashboard"
-  ],
-  "labels": [
-    "renovate",
-    "dependencies"
-  ],
-  "assigneesFromCodeOwners": true,
-  "packageRules": [
-    {
-      "matchDepTypes": ["devDependencies"],
-      "matchUpdateTypes": [
-        "minor",
-        "patch",
-        "pin",
-        "digest"
-      ],
-      "automerge": true,
-      "automergeType": "pr",
-      "platformAutomerge": true
-    },
-    {
-      "matchDepTypes": ["dependencies"],
-      "matchUpdateTypes": [
-        "minor",
-        "patch",
-        "pin",
-        "digest"
-      ]
-    },
-    {
-      "matchUpdateTypes": [
-        "major"
-      ]
-    },
-    {
-      "matchPackageNames": ["yarn"],
-      "matchUpdateTypes": [
-        "minor",
-        "patch",
-        "pin",
-        "digest"
-      ],
-      "automerge": true,
-      "automergeType": "pr",
-      "platformAutomerge": true
-    },
-    {
-      "matchPackageNames": ["node"],
-      "matchUpdateTypes": [
-        "minor",
-        "patch",
-        "pin",
-        "digest"
-      ],
-      "automerge": true,
-      "automergeType": "pr",
-      "platformAutomerge": true
-    },
-    {
-      "matchPackageNames": ["bun"],
-      "matchUpdateTypes": [
-        "minor",
-        "patch",
-        "pin",
-        "digest"
-      ],
-      "automerge": true,
-      "automergeType": "pr",
-      "platformAutomerge": true
-    }
-  ],
-  "lockFileMaintenance": {
-    "enabled": true,
-    "automerge": true,
-    "automergeType": "pr",
-    "platformAutomerge": true
-  }
-}
+	"extends": ["github>hexadrop/renovate-config"],
+	"hostRules": [
+		{
+			"matchHost": "europe-npm.pkg.dev",
+			"username": "_json_key_base64",
+			"password": "{{ secrets.RENOVATE_SERVICE_ACCOUNT_KEY }}",
+			"hostType": "npm"
+		}
+	],
+	"npmrc": "@mariomh:registry=https://europe-npm.pkg.dev/mariomh/npm/",
+	"packageRules": [
+		{
+			"matchPackageNames": ["@mariomh/*"],
+			"groupName": "@mariomh monorepo"
+		}
+	]}
