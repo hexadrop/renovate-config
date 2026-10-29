@@ -1,82 +1,110 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base",
-    ":disableDependencyDashboard"
+    "config:recommended"
   ],
   "labels": [
     "renovate",
     "dependencies"
   ],
   "assigneesFromCodeOwners": true,
+  "dependencyDashboard": true,
+  "timezone": "Europe/Madrid",
+  "minimumReleaseAge": "7 days",
+  "minimumReleaseAgeBehaviour": "timestamp-required",
+  "internalChecksFilter": "strict",
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 2,
+  "rebaseWhen": "automerging",
+  "automergeType": "pr",
+  "automergeStrategy": "squash",
+  "platformAutomerge": false,
+  "gitIgnoredAuthors": [
+    "41898282+github-actions[bot]@users.noreply.github.com"
+  ],
   "packageRules": [
     {
-      "matchDepTypes": ["devDependencies"],
+      "description": "Automatically merge non-major devDependencies once the checks pass",
+      "matchDepTypes": [
+        "devDependencies"
+      ],
       "matchUpdateTypes": [
         "minor",
         "patch",
         "pin",
         "digest"
       ],
-      "automerge": true,
-      "automergeType": "pr",
-      "platformAutomerge": true
+      "automerge": true
     },
     {
-      "matchDepTypes": ["dependencies"],
+      "description": "Automatically merge patch updates of runtime dependencies",
+      "matchDepTypes": [
+        "dependencies"
+      ],
+      "matchUpdateTypes": [
+        "patch",
+        "pin",
+        "digest"
+      ],
+      "automerge": true
+    },
+    {
+      "description": "Automatically merge minor updates of runtime dependencies after a longer cooldown",
+      "matchDepTypes": [
+        "dependencies"
+      ],
+      "matchUpdateTypes": [
+        "minor"
+      ],
+      "minimumReleaseAge": "14 days",
+      "automerge": true
+    },
+    {
+      "description": "Automatically merge yarn, node and bun updates",
+      "matchPackageNames": [
+        "yarn",
+        "node",
+        "bun"
+      ],
       "matchUpdateTypes": [
         "minor",
         "patch",
         "pin",
         "digest"
-      ]
+      ],
+      "automerge": true
     },
     {
+      "description": "Automatically merge GitHub Actions updates",
+      "matchManagers": [
+        "github-actions"
+      ],
+      "minimumReleaseAge": "3 days",
+      "automerge": true
+    },
+    {
+      "description": "Do not wait for a cooldown on our own packages",
+      "matchPackageNames": [
+        "@hexadrop/**",
+        "hexadrop/**"
+      ],
+      "minimumReleaseAge": null
+    },
+    {
+      "description": "Require explicit approval from the dependency dashboard for majors",
       "matchUpdateTypes": [
         "major"
-      ]
-    },
-    {
-      "matchPackageNames": ["yarn"],
-      "matchUpdateTypes": [
-        "minor",
-        "patch",
-        "pin",
-        "digest"
       ],
-      "automerge": true,
-      "automergeType": "pr",
-      "platformAutomerge": true
-    },
-    {
-      "matchPackageNames": ["node"],
-      "matchUpdateTypes": [
-        "minor",
-        "patch",
-        "pin",
-        "digest"
-      ],
-      "automerge": true,
-      "automergeType": "pr",
-      "platformAutomerge": true
-    },
-    {
-      "matchPackageNames": ["bun"],
-      "matchUpdateTypes": [
-        "minor",
-        "patch",
-        "pin",
-        "digest"
-      ],
-      "automerge": true,
-      "automergeType": "pr",
-      "platformAutomerge": true
+      "dependencyDashboardApproval": true,
+      "automerge": false
     }
   ],
   "lockFileMaintenance": {
     "enabled": true,
-    "automerge": true,
-    "automergeType": "pr",
-    "platformAutomerge": true
+    "schedule": [
+      "before 6am on monday"
+    ],
+    "minimumReleaseAge": null,
+    "automerge": true
   }
 }
