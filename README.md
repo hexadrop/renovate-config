@@ -26,15 +26,15 @@ You can use this preset with the following configuration
 
 ## Automerge and branch protection
 
-The preset uses `automergeType: "pr"` with `platformAutomerge: false`: Renovate waits for the required checks to be green and merges by itself with its own token. So that it can skip the required review without relaxing the rule for humans, the Renovate App (id `2740`) has to be in the bypass list of the branch ruleset that protects `main` and `develop`, with the **"For pull requests only"** mode.
+The preset uses `automergeType: "pr"` with `platformAutomerge: true`: Renovate enables GitHub native auto-merge with a squash merge, and GitHub merges when the required checks pass and the pull request has the required approval.
 
-`platformAutomerge: true` is not used on purpose: GitHub does not apply an actor's bypass to native auto-merge or the merge queue, so the PR would stay in `REVIEW_REQUIRED` forever. `automergeType: "branch"` is not used either, as it would lose the PR record.
+The approval comes from the `hexabot` app through the reusable `renovate-approve.yml` workflow: it approves dependency pull requests and approves them again on every push, because `dismiss_stale_reviews_on_push` dismisses the previous approval. The review requirement stays in place for humans, and no app needs to bypass the branch rules.
 
-Apply the bypass to every repository of the organization that extends this preset:
+Repositories that still have the Renovate app in the ruleset bypass list (the previous `platformAutomerge: false` setup) can remove it with:
 
 ```bash
-./scripts/apply-renovate-bypass.sh            # dry-run: shows the before and after
-./scripts/apply-renovate-bypass.sh --apply    # applies it
+./scripts/apply-renovate-bypass.sh --remove            # dry-run: shows the before and after
+./scripts/apply-renovate-bypass.sh --remove --apply    # removes it
 ```
 
 It needs `gh` authenticated with admin permissions on the repositories and `jq`. It only touches branch rules that require at least one review.
