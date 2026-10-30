@@ -18,7 +18,7 @@
   "rebaseWhen": "automerging",
   "automergeType": "pr",
   "automergeStrategy": "squash",
-  "platformAutomerge": true,
+  "platformAutomerge": false,
   "gitIgnoredAuthors": [
     "41898282+github-actions[bot]@users.noreply.github.com",
     "350309594+hexadrop[bot]@users.noreply.github.com"
@@ -38,7 +38,7 @@
       "automerge": true
     },
     {
-      "description": "Automatically merge patch updates of runtime dependencies",
+      "description": "Require approval for patch updates of runtime dependencies: they produce a changeset",
       "matchDepTypes": [
         "dependencies"
       ],
@@ -47,10 +47,10 @@
         "pin",
         "digest"
       ],
-      "automerge": true
+      "automerge": false
     },
     {
-      "description": "Automatically merge minor updates of runtime dependencies after a longer cooldown",
+      "description": "Require approval for minor updates of runtime dependencies: they produce a changeset",
       "matchDepTypes": [
         "dependencies"
       ],
@@ -58,7 +58,7 @@
         "minor"
       ],
       "minimumReleaseAge": "14 days",
-      "automerge": true
+      "automerge": false
     },
     {
       "description": "Automatically merge yarn, node and bun updates",
