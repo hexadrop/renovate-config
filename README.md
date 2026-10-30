@@ -20,24 +20,26 @@ You can use this preset with the following configuration
 
 - **Dependency Dashboard** enabled: updates held back by the cooldown and the ones waiting for your approval show up there, without opening PRs.
 - **7-day cooldown** (`minimumReleaseAge`): a version does not get a PR until 7 days after it was published. Runtime `minor` updates wait 14 days and GitHub Actions 3. `@hexadrop/*` packages and `hexadrop/*` actions do not wait.
-- **Automerge** for non-major devDependencies, runtime patches and minors, GitHub Actions and lock file maintenance. **Majors** do not open a PR until you approve them from the dashboard.
+- **Automerge** for non-major devDependencies, GitHub Actions, node/bun/yarn and lock file maintenance. Runtime dependency updates produce a changeset, so they wait for a maintainer. **Majors** do not open a PR until you approve them from the dashboard.
 - **One PR per package** (or per monorepo family) and squash on merge: the 1:1 record with the package is kept in the history.
 - Rebases only when needed (`rebaseWhen: automerging`) and at most 5 open PRs at a time.
 
 ## Automerge and branch protection
 
-The preset uses `automergeType: "pr"` with `platformAutomerge: true`: Renovate enables GitHub native auto-merge with a squash merge, and GitHub merges when the required checks pass and the pull request has the required approval.
+The preset uses `automergeType: "pr"` with `platformAutomerge: false`: Renovate merges the pull requests it is allowed to automerge with its own token, after checking that the required checks are green.
 
-The approval comes from the `hexabot` app through the reusable `renovate-approve.yml` workflow: it approves dependency pull requests and approves them again on every push, because `dismiss_stale_reviews_on_push` dismisses the previous approval. The review requirement stays in place for humans, and no app needs to bypass the branch rules.
+Only the updates that do not change the published packages are merged automatically: devDependencies, GitHub Actions, node/bun/yarn and lock file maintenance. Runtime dependency updates produce a changeset, so they stay open until a maintainer approves and merges them.
 
-Repositories that still have the Renovate app in the ruleset bypass list (the previous `platformAutomerge: false` setup) can remove it with:
+So that Renovate can merge without a human approval, its app (id `2740`) is in the bypass list of the branch ruleset that protects `main` and `develop`, with the **"For pull requests only"** mode:
 
 ```bash
-./scripts/apply-renovate-bypass.sh --remove            # dry-run: shows the before and after
-./scripts/apply-renovate-bypass.sh --remove --apply    # removes it
+./scripts/apply-renovate-bypass.sh            # dry-run: shows the before and after
+./scripts/apply-renovate-bypass.sh --apply    # applies it
 ```
 
 It needs `gh` authenticated with admin permissions on the repositories and `jq`. It only touches branch rules that require at least one review.
+
+`/merge` covers the rest: it approves with the `hexabot` app (a person triggers it with a comment) and merges with the method required by the policy.
 
 ### Personal accounts
 
