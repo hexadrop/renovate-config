@@ -20,7 +20,8 @@
   "automergeStrategy": "squash",
   "platformAutomerge": true,
   "gitIgnoredAuthors": [
-    "41898282+github-actions[bot]@users.noreply.github.com"
+    "41898282+github-actions[bot]@users.noreply.github.com",
+    "350309594+hexadrop[bot]@users.noreply.github.com"
   ],
   "packageRules": [
     {
