@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
 #
-# Allows the Renovate GitHub App to bypass the required pull request reviews of
-# the branch rulesets, so it can merge its own PRs. The preset uses
-# automergeType=pr with platformAutomerge=false, which means Renovate merges
-# directly instead of relying on GitHub's native auto-merge (that one ignores
-# the bypass list).
+# Adds or removes the bypass entry of the Renovate GitHub App in the branch
+# rulesets. The preset used it while platformAutomerge was false, so Renovate
+# merged by itself. With native auto-merge the hexabot app approves the pull
+# requests and no app needs to bypass the required reviews anymore.
 #
 # Usage:
-#   scripts/apply-renovate-bypass.sh [--apply] [repository ...]
+#   scripts/apply-renovate-bypass.sh [--remove] [--apply] [repository ...]
 #
 # Without --apply it only shows what would change. Without repositories it
 # applies to every repository of the owner that has a renovate.json.
@@ -26,6 +25,7 @@ RENOVATE_APP_ID="${RENOVATE_APP_ID:-2740}"
 BYPASS_MODE="${BYPASS_MODE:-pull_request}"
 
 MODE="dry-run"
+ACTION="add"
 REPOS=()
 
 usage() {
@@ -35,6 +35,7 @@ usage() {
 for arg in "$@"; do
 	case "$arg" in
 		--apply) MODE="apply" ;;
+		--remove) ACTION="remove" ;;
 		--dry-run) MODE="dry-run" ;;
 		-h | --help)
 			usage
@@ -119,10 +120,10 @@ for repo in "${REPOS[@]}"; do
 			continue
 		fi
 
-		jq --argjson app "$RENOVATE_APP_ID" --arg mode "$BYPASS_MODE" '
+		jq --argjson app "$RENOVATE_APP_ID" --arg mode "$BYPASS_MODE" --arg action "$ACTION" '
 			.bypass_actors = (
 				[((.bypass_actors // [])[]) | select(.actor_type != "Integration" or .actor_id != $app)]
-				+ [{ actor_id: $app, actor_type: "Integration", bypass_mode: $mode }]
+				+ (if $action == "add" then [{ actor_id: $app, actor_type: "Integration", bypass_mode: $mode }] else [] end)
 			)
 			| { name, target, enforcement, conditions, rules, bypass_actors }
 		' "$current" > "$desired"
